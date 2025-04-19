@@ -3,44 +3,99 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
+  <title>BMR・TDEE計算機 - 多言語対応</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>基礎代謝・TDEE計算機</title>
   <style>
-    body { font-family: sans-serif; background: #f5f5f5; padding: 20px; }
-    .container { background: #fff; padding: 20px; border-radius: 10px; max-width: 600px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-    input, select { width: 100%; padding: 10px; margin-top: 10px; margin-bottom: 20px; font-size: 1em; }
-    button { padding: 10px; font-size: 1em; width: 100%; background: #4CAF50; color: white; border: none; border-radius: 5px; }
-    .result { background: #eaffea; border-left: 5px solid #4CAF50; padding: 15px; margin-top: 20px; }
+    body { font-family: sans-serif; background: #f0f0f0; padding: 20px; }
+    .container { background: #fff; max-width: 600px; margin: auto; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    select, input, button { width: 100%; padding: 10px; margin-top: 10px; font-size: 1em; }
+    .result { background: #eaffea; padding: 15px; border-radius: 5px; margin-top: 20px; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>基礎代謝・TDEE計算機</h1>
-    <label>性別</label>
+    <h1 id="title">基礎代謝・TDEE計算機</h1>
+    <label for="language">Language / 言語:</label>
+    <select id="language" onchange="changeLanguage()">
+      <option value="ja">日本語</option>
+      <option value="en">English</option>
+    </select>
+
+    <label id="label-gender">性別</label>
     <select id="gender">
-      <option value="male">男性</option>
-      <option value="female">女性</option>
+      <option value="male">男性 / Male</option>
+      <option value="female">女性 / Female</option>
     </select>
-    <label>年齢（歳）</label>
-    <input type="number" id="age" />
-    <label>身長（cm）</label>
-    <input type="number" id="height" />
-    <label>体重（kg）</label>
-    <input type="number" id="weight" />
-    <label>活動レベル</label>
+
+    <label id="label-age">年齢（歳）</label>
+    <input type="number" id="age">
+
+    <label id="label-height">身長（cm）</label>
+    <input type="number" id="height">
+
+    <label id="label-weight">体重（kg）</label>
+    <input type="number" id="weight">
+
+    <label id="label-activity">活動レベル</label>
     <select id="activity">
-      <option value="1.2">低い（ほぼ運動しない）</option>
-      <option value="1.375">やや低い（週1〜2回軽い運動）</option>
-      <option value="1.55">普通（週3〜5回 中程度の運動）</option>
-      <option value="1.725">高い（週6〜毎日運動）</option>
-      <option value="1.9">非常に高い（1日2回トレ・ハードワーク）</option>
+      <option value="1.2">低い（ほぼ運動しない） / Sedentary</option>
+      <option value="1.375">やや低い（軽い運動） / Light</option>
+      <option value="1.55">普通（中程度の運動） / Moderate</option>
+      <option value="1.725">高い（ハードな運動） / Active</option>
+      <option value="1.9">非常に高い（非常にハード） / Very Active</option>
     </select>
-    <button onclick="calculate()">計算する</button>
+
+    <button onclick="calculate()">計算する / Calculate</button>
+
     <div class="result" id="result" style="display:none;"></div>
   </div>
 
   <script>
+    const texts = {
+      ja: {
+        title: "基礎代謝・TDEE計算機",
+        gender: "性別",
+        age: "年齢（歳）",
+        height: "身長（cm）",
+        weight: "体重（kg）",
+        activity: "活動レベル",
+        result_bmr: "BMR（基礎代謝量）",
+        result_tdee: "TDEE（総消費カロリー）",
+        result_cut: "減量向きの摂取カロリー",
+        result_bulk: "増量向きの摂取カロリー",
+        button: "計算する"
+      },
+      en: {
+        title: "BMR & TDEE Calculator",
+        gender: "Gender",
+        age: "Age (years)",
+        height: "Height (cm)",
+        weight: "Weight (kg)",
+        activity: "Activity Level",
+        result_bmr: "BMR (Basal Metabolic Rate)",
+        result_tdee: "TDEE (Total Daily Energy Expenditure)",
+        result_cut: "Calories for Cutting",
+        result_bulk: "Calories for Bulking",
+        button: "Calculate"
+      }
+    };
+
+    function changeLanguage() {
+      const lang = document.getElementById("language").value;
+      const t = texts[lang];
+      document.getElementById("title").textContent = t.title;
+      document.getElementById("label-gender").textContent = t.gender;
+      document.getElementById("label-age").textContent = t.age;
+      document.getElementById("label-height").textContent = t.height;
+      document.getElementById("label-weight").textContent = t.weight;
+      document.getElementById("label-activity").textContent = t.activity;
+      document.querySelector("button").textContent = t.button;
+    }
+
     function calculate() {
+      const lang = document.getElementById("language").value;
+      const t = texts[lang];
+
       const gender = document.getElementById("gender").value;
       const age = parseInt(document.getElementById("age").value);
       const height = parseFloat(document.getElementById("height").value);
@@ -48,11 +103,10 @@
       const activity = parseFloat(document.getElementById("activity").value);
 
       if (isNaN(age) || isNaN(height) || isNaN(weight)) {
-        alert("すべての数値を正しく入力してください");
+        alert("Please fill in all fields / 全ての項目を入力してください");
         return;
       }
 
-      // Mifflin-St Jeor 式
       let bmr = gender === "male"
         ? 10 * weight + 6.25 * height - 5 * age + 5
         : 10 * weight + 6.25 * height - 5 * age - 161;
@@ -63,13 +117,15 @@
 
       const result = document.getElementById("result");
       result.innerHTML = `
-        <p><strong>BMR（基礎代謝量）:</strong> ${bmr.toFixed(0)} kcal/日</p>
-        <p><strong>TDEE（総消費カロリー）:</strong> ${tdee.toFixed(0)} kcal/日</p>
-        <p><strong>減量向きの摂取カロリー:</strong> ${cut.toFixed(0)} kcal/日</p>
-        <p><strong>増量向きの摂取カロリー:</strong> ${bulk.toFixed(0)} kcal/日</p>
+        <p><strong>${t.result_bmr}:</strong> ${bmr.toFixed(0)} kcal</p>
+        <p><strong>${t.result_tdee}:</strong> ${tdee.toFixed(0)} kcal</p>
+        <p><strong>${t.result_cut}:</strong> ${cut.toFixed(0)} kcal</p>
+        <p><strong>${t.result_bulk}:</strong> ${bulk.toFixed(0)} kcal</p>
       `;
       result.style.display = "block";
     }
+
+    window.onload = changeLanguage;
   </script>
 </body>
 </html>
