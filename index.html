@@ -14,12 +14,13 @@
 </head>
 <body>
   <div class="container">
-    <h1 id="title">基礎代謝・TDEE計算機</h1>
-    <label for="language">Language / 言語:</label>
+    <label for="language"><strong>Language / 言語:</strong></label>
     <select id="language" onchange="changeLanguage()">
       <option value="ja">日本語</option>
       <option value="en">English</option>
-    </select>
+    </select><br><br>
+
+    <h1 id="title">基礎代謝・TDEE計算機</h1>
 
     <label id="label-gender">性別</label>
     <select id="gender">
@@ -45,56 +46,39 @@
       <option value="1.9">非常に高い（非常にハード） / Very Active</option>
     </select>
 
-    <button onclick="calculate()">計算する / Calculate</button>
+    <button id="calcBtn" onclick="calculate()">計算する / Calculate</button>
 
     <div class="result" id="result" style="display:none;"></div>
   </div>
 
   <script>
     const texts = {
-      ja: {
-        title: "基礎代謝・TDEE計算機",
-        gender: "性別",
-        age: "年齢（歳）",
-        height: "身長（cm）",
-        weight: "体重（kg）",
-        activity: "活動レベル",
-        result_bmr: "BMR（基礎代謝量）",
-        result_tdee: "TDEE（総消費カロリー）",
-        result_cut: "減量向きの摂取カロリー",
-        result_bulk: "増量向きの摂取カロリー",
-        button: "計算する"
-      },
-      en: {
-        title: "BMR & TDEE Calculator",
-        gender: "Gender",
-        age: "Age (years)",
-        height: "Height (cm)",
-        weight: "Weight (kg)",
-        activity: "Activity Level",
-        result_bmr: "BMR (Basal Metabolic Rate)",
-        result_tdee: "TDEE (Total Daily Energy Expenditure)",
-        result_cut: "Calories for Cutting",
-        result_bulk: "Calories for Bulking",
-        button: "Calculate"
-      }
+      title: { ja: "基礎代謝・TDEE計算機", en: "BMR & TDEE Calculator" },
+      label_gender: { ja: "性別", en: "Gender" },
+      label_age: { ja: "年齢（歳）", en: "Age (years)" },
+      label_height: { ja: "身長（cm）", en: "Height (cm)" },
+      label_weight: { ja: "体重（kg）", en: "Weight (kg)" },
+      label_activity: { ja: "活動レベル", en: "Activity Level" },
+      result_bmr: { ja: "BMR（基礎代謝量）", en: "BMR (Basal Metabolic Rate)" },
+      result_tdee: { ja: "TDEE（総消費カロリー）", en: "TDEE (Total Daily Energy Expenditure)" },
+      result_cut: { ja: "減量向きの摂取カロリー", en: "Calories for Cutting" },
+      result_bulk: { ja: "増量向きの摂取カロリー", en: "Calories for Bulking" },
+      button: { ja: "計算する", en: "Calculate" }
     };
 
     function changeLanguage() {
       const lang = document.getElementById("language").value;
-      const t = texts[lang];
-      document.getElementById("title").textContent = t.title;
-      document.getElementById("label-gender").textContent = t.gender;
-      document.getElementById("label-age").textContent = t.age;
-      document.getElementById("label-height").textContent = t.height;
-      document.getElementById("label-weight").textContent = t.weight;
-      document.getElementById("label-activity").textContent = t.activity;
-      document.querySelector("button").textContent = t.button;
+      document.getElementById("title").textContent = texts.title[lang];
+      document.getElementById("label-gender").textContent = texts.label_gender[lang];
+      document.getElementById("label-age").textContent = texts.label_age[lang];
+      document.getElementById("label-height").textContent = texts.label_height[lang];
+      document.getElementById("label-weight").textContent = texts.label_weight[lang];
+      document.getElementById("label-activity").textContent = texts.label_activity[lang];
+      document.getElementById("calcBtn").textContent = texts.button[lang];
     }
 
     function calculate() {
       const lang = document.getElementById("language").value;
-      const t = texts[lang];
 
       const gender = document.getElementById("gender").value;
       const age = parseInt(document.getElementById("age").value);
@@ -117,10 +101,10 @@
 
       const result = document.getElementById("result");
       result.innerHTML = `
-        <p><strong>${t.result_bmr}:</strong> ${bmr.toFixed(0)} kcal</p>
-        <p><strong>${t.result_tdee}:</strong> ${tdee.toFixed(0)} kcal</p>
-        <p><strong>${t.result_cut}:</strong> ${cut.toFixed(0)} kcal</p>
-        <p><strong>${t.result_bulk}:</strong> ${bulk.toFixed(0)} kcal</p>
+        <p><strong>${texts.result_bmr[lang]}:</strong> ${bmr.toFixed(0)} kcal</p>
+        <p><strong>${texts.result_tdee[lang]}:</strong> ${tdee.toFixed(0)} kcal</p>
+        <p><strong>${texts.result_cut[lang]}:</strong> ${cut.toFixed(0)} kcal</p>
+        <p><strong>${texts.result_bulk[lang]}:</strong> ${bulk.toFixed(0)} kcal</p>
       `;
       result.style.display = "block";
     }
