@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>基礎代謝・TDEE計算機</title>
+  <style>
+    body { font-family: sans-serif; background: #f5f5f5; padding: 20px; }
+    .container { background: #fff; padding: 20px; border-radius: 10px; max-width: 600px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    input, select { width: 100%; padding: 10px; margin-top: 10px; margin-bottom: 20px; font-size: 1em; }
+    button { padding: 10px; font-size: 1em; width: 100%; background: #4CAF50; color: white; border: none; border-radius: 5px; }
+    .result { background: #eaffea; border-left: 5px solid #4CAF50; padding: 15px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>基礎代謝・TDEE計算機</h1>
+    <label>性別</label>
+    <select id="gender">
+      <option value="male">男性</option>
+      <option value="female">女性</option>
+    </select>
+    <label>年齢（歳）</label>
+    <input type="number" id="age" />
+    <label>身長（cm）</label>
+    <input type="number" id="height" />
+    <label>体重（kg）</label>
+    <input type="number" id="weight" />
+    <label>活動レベル</label>
+    <select id="activity">
+      <option value="1.2">低い（ほぼ運動しない）</option>
+      <option value="1.375">やや低い（週1〜2回軽い運動）</option>
+      <option value="1.55">普通（週3〜5回 中程度の運動）</option>
+      <option value="1.725">高い（週6〜毎日運動）</option>
+      <option value="1.9">非常に高い（1日2回トレ・ハードワーク）</option>
+    </select>
+    <button onclick="calculate()">計算する</button>
+    <div class="result" id="result" style="display:none;"></div>
+  </div>
+
+  <script>
+    function calculate() {
+      const gender = document.getElementById("gender").value;
+      const age = parseInt(document.getElementById("age").value);
+      const height = parseFloat(document.getElementById("height").value);
+      const weight = parseFloat(document.getElementById("weight").value);
+      const activity = parseFloat(document.getElementById("activity").value);
+
+      if (isNaN(age) || isNaN(height) || isNaN(weight)) {
+        alert("すべての数値を正しく入力してください");
+        return;
+      }
+
+      // Mifflin-St Jeor 式
+      let bmr = gender === "male"
+        ? 10 * weight + 6.25 * height - 5 * age + 5
+        : 10 * weight + 6.25 * height - 5 * age - 161;
+
+      const tdee = bmr * activity;
+      const cut = tdee - 500;
+      const bulk = tdee + 500;
+
+      const result = document.getElementById("result");
+      result.innerHTML = `
+        <p><strong>BMR（基礎代謝量）:</strong> ${bmr.toFixed(0)} kcal/日</p>
+        <p><strong>TDEE（総消費カロリー）:</strong> ${tdee.toFixed(0)} kcal/日</p>
+        <p><strong>減量向きの摂取カロリー:</strong> ${cut.toFixed(0)} kcal/日</p>
+        <p><strong>増量向きの摂取カロリー:</strong> ${bulk.toFixed(0)} kcal/日</p>
+      `;
+      result.style.display = "block";
+    }
+  </script>
+</body>
+</html>
